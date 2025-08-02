@@ -151,5 +151,4 @@ app.MapGet("/delete-user/{id}", async (long id, IDbContext _context) =>
 
 Contributions, issues, and feature requests are welcome! Feel free to fork the repository and submit a pull request.
 
-
-# HeadLess.SQLBuilder
+# Happy Coding 👋
