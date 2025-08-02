@@ -50,6 +50,18 @@ builder.Services.AddScoped<IDbContext>(sp => {
 });
 ```
 
+In your `appsettings.json`, configure the ConnectionStrings:
+
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Database=Database;Username=root;Password=Password;",
+    "ReadConnection": "Host=localhost;Database=Database;Username=root;Password=Password;",
+    "WriteConnection": "Host=localhost;Database=Database;Username=root;Password=Password;"
+  }
+}
+```
+
 > **Note:** Prefix connection strings with the database type (`mysql:`, `pgsql:`, `mssql:`)
 
 ## 🔍 Example Usage
