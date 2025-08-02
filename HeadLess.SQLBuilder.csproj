@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.66" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.0" PrivateAssets="all" />
+    <PackageReference Include="MySql.Data" Version="9.4.0" PrivateAssets="all" />
+    <PackageReference Include="Npgsql" Version="7.0.4" PrivateAssets="all" />
+  </ItemGroup>
+</Project>

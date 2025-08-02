@@ -1,0 +1,35 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeadLess.SQLBuilder", "HeadLess.SQLBuilder.csproj", "{638DB3F3-36F7-DDFE-E21C-1409CD06E07B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeadLess.SQLBuilder.Tests", "Tests\HeadLess.SQLBuilder.Tests\HeadLess.SQLBuilder.Tests.csproj", "{2278FC1D-EFCC-8BE9-7562-B88191DA21FC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{638DB3F3-36F7-DDFE-E21C-1409CD06E07B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{638DB3F3-36F7-DDFE-E21C-1409CD06E07B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{638DB3F3-36F7-DDFE-E21C-1409CD06E07B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{638DB3F3-36F7-DDFE-E21C-1409CD06E07B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2278FC1D-EFCC-8BE9-7562-B88191DA21FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2278FC1D-EFCC-8BE9-7562-B88191DA21FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2278FC1D-EFCC-8BE9-7562-B88191DA21FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2278FC1D-EFCC-8BE9-7562-B88191DA21FC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2278FC1D-EFCC-8BE9-7562-B88191DA21FC} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3B125F70-0AE5-4A69-A85D-81CD9830ECE2}
+	EndGlobalSection
+EndGlobal

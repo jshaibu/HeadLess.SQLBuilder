@@ -1,0 +1,38 @@
+# Build folders
+bin/
+obj/
+
+# Visual Studio folders
+.vs/
+
+# User-specific files
+*.user
+*.suo
+*.userprefs
+
+# Visual Studio Code settings
+.vscode/
+
+# Logs
+*.log
+
+# NuGet packages
+*.nupkg
+packages/
+
+# Build outputs (optional)
+*.dll
+*.exe
+*.pdb
+
+# Rider IDE
+.idea/
+*.sln.iml
+
+# Others
+*.cache
+*.ilk
+*.ipch
+*.dbmdl
+*.bak
+*.backup
