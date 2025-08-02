@@ -138,11 +138,11 @@ app.MapPut("/update-user/{id}", async ([FromBody] User user, long id, IDbContext
 ### Delete Example
 
 ```csharp
-app.MapGet("/delete-user/{id}", async (long id, IDbContext _context) =>
+app.MapDelete("delete-user/{id}", async (long id, IDbContext _context) =>
 {
     using var connection = _context.GetDefaultConnection();
     var (sql, parameters) = new DeleteBuilder<Customers>().Where("Id", "=", id).Build();
-
+    
     return Results.Ok(new { sql, parameters });
 });
 ```
