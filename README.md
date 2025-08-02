@@ -111,13 +111,45 @@ app.MapGet("/join-users-customers", async (IDbContext _context) =>
 });
 ```
 
+### Insert Example
+
+```csharp
+app.MapPost("/insert-user", async ([FromBody] User user, IDbContext _context) =>
+{
+    using var connection = _context.GetDefaultConnection();
+    var (sql, parameters) = new InsertBuilder<User>(user).AutoMap().Build();
+
+    return Results.Ok(new { sql, parameters });
+});
+```
+
+### Update Example
+
+```csharp
+app.MapPut("/update-user/{id}", async ([FromBody] User user, long id, IDbContext _context) =>
+{
+    using var connection = _context.GetDefaultConnection();
+    var (sql, parameters) = new UpdateBuilder<User>(user).AutoMap().Where("Id", "=", id).Build();
+
+    return Results.Ok(new { sql, parameters });
+});
+```
+
+### Delete Example
+
+```csharp
+app.MapGet("/delete-user/{id}", async (long id, IDbContext _context) =>
+{
+    using var connection = _context.GetDefaultConnection();
+    var (sql, parameters) = new DeleteBuilder<Customers>().Where("Id", "=", id).Build();
+
+    return Results.Ok(new { sql, parameters });
+});
+```
+
 ## 🤝 Contributing
 
 Contributions, issues, and feature requests are welcome! Feel free to fork the repository and submit a pull request.
-
-## 📄 License
-
-This project is licensed under the MIT License.
 
 
 # HeadLess.SQLBuilder
