@@ -389,7 +389,19 @@ public class SqlBuilder<T> where T : class
     private string GetAliasFromTypeName(Type type)
     {
         var name = type.Name;
-        return name; 
+
+        // Common suffixes to strip (case-insensitive)
+        string[] suffixes = { "Dto", "Entity", "Model", "ViewModel" };
+
+        foreach (var suffix in suffixes)
+        {
+            if (name.EndsWith(suffix, StringComparison.OrdinalIgnoreCase))
+            {
+                return name.Substring(0, name.Length - suffix.Length);
+            }
+        }
+
+        return name;
     }
 
     public (string Sql, object Parameters) ToSql()
@@ -447,8 +459,6 @@ FROM
     public async Task<List<dynamic>> ToListAsync(IDbConnection connection)
     {
         var (sql, parameters) = ToSql();
-        WriteLine($"{sql}\n");
-
         return (await connection.QueryAsync(sql, parameters)).ToList();
     }
 }
