@@ -92,7 +92,7 @@ app.MapGet("/count", async (IDbContext _context) =>
         .Join<Cart, Customers>("Id", "CustomerId");
 
     var (sql, parameters) = query.ToCountSql();
-    WriteLine($"Query: { sql }");
+    Console.WriteLine($"Query: { sql }");
     
     return await query.CountAsync(connection);
 });
