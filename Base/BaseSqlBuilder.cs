@@ -7,14 +7,17 @@ using HeadLess.SQLBuilder.Utils;
 
 namespace HeadLess.SQLBuilder.Base;
 
-public abstract class WhereClauseBuilderBase<TBuilder, TModel>
-    where TBuilder : WhereClauseBuilderBase<TBuilder, TModel>
+public abstract class BaseSqlBuilder<TBuilder, TModel>
+    where TBuilder : BaseSqlBuilder<TBuilder, TModel>
     where TModel : class
 {
     protected readonly List<(string Logic, string Clause)> _whereClauses = new();
+    protected readonly List<string> _joins = new();
     protected readonly Dictionary<string, object> _parameters = new();
     protected int _paramIndex = 0;
 
+    protected string Alias => GetAlias(typeof(TModel));
+    
     protected abstract string GetAlias(Type type);
 
     public TBuilder Where(Expression<Func<TModel, bool>> predicate)
@@ -106,4 +109,48 @@ public abstract class WhereClauseBuilderBase<TBuilder, TModel>
 
         return (TBuilder)this;
     }
+    
+    // joins
+    public TBuilder Join<TOther>(string fromColumn, string toColumn)
+    {
+        var otherAlias = GetAlias(typeof(TOther));
+        _joins.Add($"JOIN {typeof(TOther).Name} AS {otherAlias} ON {Alias}.{fromColumn} = {otherAlias}.{toColumn}");
+        return (TBuilder)this;
+    }
+
+    public TBuilder LeftJoin<TOther>(string fromColumn, string toColumn)
+    {
+        var otherAlias = GetAlias(typeof(TOther));
+        _joins.Add($"LEFT JOIN {typeof(TOther).Name} AS {otherAlias} ON {Alias}.{fromColumn} = {otherAlias}.{toColumn}");
+        return (TBuilder)this;
+    }
+
+    public TBuilder RightJoin<TOther>(string fromColumn, string toColumn)
+    {
+        var otherAlias = GetAlias(typeof(TOther));
+        _joins.Add($"RIGHT JOIN {typeof(TOther).Name} AS {otherAlias} ON {Alias}.{fromColumn} = {otherAlias}.{toColumn}");
+        return (TBuilder)this;
+    }
+
+    public TBuilder Join<TOther, TAdditional>(string fromColumn, string toColumn)
+    {
+        var otherAlias = GetAlias(typeof(TOther));
+        _joins.Add($"JOIN {typeof(TOther).Name} AS {otherAlias} ON {typeof(TAdditional).Name}.{fromColumn} = {otherAlias}.{toColumn}");
+        return (TBuilder)this;
+    }
+
+    public TBuilder LeftJoin<TOther, TAdditional>(string fromColumn, string toColumn)
+    {
+        var otherAlias = GetAlias(typeof(TOther));
+        _joins.Add($"LEFT JOIN {typeof(TOther).Name} AS {otherAlias} ON {typeof(TAdditional).Name}.{fromColumn} = {otherAlias}.{toColumn}");
+        return (TBuilder)this;
+    }
+
+    public TBuilder RightJoin<TOther, TAdditional>(string fromColumn, string toColumn)
+    {
+        var otherAlias = GetAlias(typeof(TOther));
+        _joins.Add($"RIGHT JOIN {typeof(TOther).Name} AS {otherAlias} ON {typeof(TAdditional).Name}.{fromColumn} = {otherAlias}.{toColumn}");
+        return (TBuilder)this;
+    }    
+    // end joins
 }

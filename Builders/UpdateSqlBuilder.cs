@@ -9,7 +9,7 @@ using static HeadLess.SQLBuilder.Utils.Helpers;
 
 namespace HeadLess.SQLBuilder.Builders;
 
-public class UpdateBuilder<T> : WhereClauseBuilderBase<UpdateBuilder<T>, T> where T : class
+public class UpdateBuilder<T> : BaseSqlBuilder<UpdateBuilder<T>, T> where T : class
 {
     private readonly string _tableName = GetAliasFromTypeName(typeof(T));
     private readonly Dictionary<string, string> _setClauses = new();

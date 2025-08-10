@@ -4,7 +4,7 @@ using static HeadLess.SQLBuilder.Utils.Helpers;
 
 namespace HeadLess.SQLBuilder.Builders;
 
-public class DeleteBuilder<T> : WhereClauseBuilderBase<DeleteBuilder<T>, T> where T : class
+public class DeleteBuilder<T> : BaseSqlBuilder<DeleteBuilder<T>, T> where T : class
 {
     private string TableName => GetAliasFromTypeName(typeof(T));
 

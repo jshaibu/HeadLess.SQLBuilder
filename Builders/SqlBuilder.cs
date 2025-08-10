@@ -11,11 +11,10 @@ using static HeadLess.SQLBuilder.Utils.Helpers;
 
 namespace HeadLess.SQLBuilder.Builders
 {
-    public class SqlBuilder<T> : WhereClauseBuilderBase<SqlBuilder<T>, T>
+    public class SqlBuilder<T> : BaseSqlBuilder<SqlBuilder<T>, T>
         where T : class
     {
         private readonly List<string> _selects = new();
-        private readonly List<string> _joins = new();
         private readonly List<string> _orderBys = new();
         private readonly List<string> _groupBys = new();
         private readonly List<string> _havings = new();
@@ -26,8 +25,7 @@ namespace HeadLess.SQLBuilder.Builders
         private int? _offset = null;
         private bool _isDistinct = false;
         private bool _isUnionAll = false;
-
-        private string Alias => GetAlias(typeof(T));
+        
         private string TableName => typeof(T).Name;
 
         public SqlBuilder() { }
@@ -115,48 +113,6 @@ namespace HeadLess.SQLBuilder.Builders
         {
             _limit = count;
             _offset = offset;
-            return this;
-        }
-
-        public SqlBuilder<T> Join<TOther>(string fromColumn, string toColumn)
-        {
-            var otherAlias = GetAlias(typeof(TOther));
-            _joins.Add($"JOIN {typeof(TOther).Name} AS {otherAlias} ON {Alias}.{fromColumn} = {otherAlias}.{toColumn}");
-            return this;
-        }
-
-        public SqlBuilder<T> LeftJoin<TOther>(string fromColumn, string toColumn)
-        {
-            var otherAlias = GetAlias(typeof(TOther));
-            _joins.Add($"LEFT JOIN {typeof(TOther).Name} AS {otherAlias} ON {Alias}.{fromColumn} = {otherAlias}.{toColumn}");
-            return this;
-        }
-
-        public SqlBuilder<T> RightJoin<TOther>(string fromColumn, string toColumn)
-        {
-            var otherAlias = GetAlias(typeof(TOther));
-            _joins.Add($"RIGHT JOIN {typeof(TOther).Name} AS {otherAlias} ON {Alias}.{fromColumn} = {otherAlias}.{toColumn}");
-            return this;
-        }
-
-        public SqlBuilder<T> Join<TOther, TAdditional>(string fromColumn, string toColumn)
-        {
-            var otherAlias = GetAlias(typeof(TOther));
-            _joins.Add($"JOIN {typeof(TOther).Name} AS {otherAlias} ON {typeof(TAdditional).Name}.{fromColumn} = {otherAlias}.{toColumn}");
-            return this;
-        }
-
-        public SqlBuilder<T> LeftJoin<TOther, TAdditional>(string fromColumn, string toColumn)
-        {
-            var otherAlias = GetAlias(typeof(TOther));
-            _joins.Add($"LEFT JOIN {typeof(TOther).Name} AS {otherAlias} ON {typeof(TAdditional).Name}.{fromColumn} = {otherAlias}.{toColumn}");
-            return this;
-        }
-
-        public SqlBuilder<T> RightJoin<TOther, TAdditional>(string fromColumn, string toColumn)
-        {
-            var otherAlias = GetAlias(typeof(TOther));
-            _joins.Add($"RIGHT JOIN {typeof(TOther).Name} AS {otherAlias} ON {typeof(TAdditional).Name}.{fromColumn} = {otherAlias}.{toColumn}");
             return this;
         }
 
