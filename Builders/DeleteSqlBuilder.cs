@@ -1,34 +1,19 @@
 using System.Text;
 using HeadLess.SQLBuilder.Base;
+using static HeadLess.SQLBuilder.Utils.Helpers;
 
 namespace HeadLess.SQLBuilder.Builders;
 
-public class DeleteBuilder<T> : BaseSqlBuilder<T> where T : class
+public class DeleteBuilder<T> : WhereClauseBuilderBase<DeleteBuilder<T>, T> where T : class
 {
-    private string TableName => typeof(T).Name;
+    private string TableName => GetAliasFromTypeName(typeof(T));
 
-    protected override BaseSqlBuilder<T> CreateNewBuilder() => new DeleteBuilder<T>();
-
-    // Override base Where methods to return DeleteBuilder<T> for fluent chaining
-    public new DeleteBuilder<T> Where(string column, string op, object? value)
+    protected override string GetAlias(Type type)
     {
-        base.Where(column, op, value);
-        return this;
+        return TableName;
     }
 
-    public new DeleteBuilder<T> OrWhere(string column, string op, object? value)
-    {
-        base.OrWhere(column, op, value);
-        return this;
-    }
-
-    public new DeleteBuilder<T> WhereGroup(Func<BaseSqlBuilder<T>, BaseSqlBuilder<T>> groupBuilder)
-    {
-        base.WhereGroup(groupBuilder);
-        return this;
-    }
-
-    public (string Sql, Dictionary<string, object?> Parameters) Build()
+    public (string Sql, Dictionary<string, object> Parameters) Build()
     {
         var sb = new StringBuilder();
         sb.Append($"DELETE FROM {TableName}");
@@ -46,7 +31,7 @@ public class DeleteBuilder<T> : BaseSqlBuilder<T> where T : class
 
         sb.Append(";");
 
-        // Return SQL string and a copy of parameters dictionary
-        return (sb.ToString(), new Dictionary<string, object?>(_parameters));
+        // Return SQL string and parameters dictionary
+        return (sb.ToString(), new Dictionary<string, object>(_parameters));
     }
 }
