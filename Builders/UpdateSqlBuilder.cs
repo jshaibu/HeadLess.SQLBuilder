@@ -1,37 +1,58 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+using System.Linq.Expressions;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using HeadLess.SQLBuilder.Base;
 using static HeadLess.SQLBuilder.Utils.Helpers;
 
 namespace HeadLess.SQLBuilder.Builders;
-
-public class UpdateBuilder<T> : BaseSqlBuilder<UpdateBuilder<T>, T> where T : class
+public class UpdateBuilder<T> : BaseUpdateDeleteBuilder<UpdateBuilder<T>, T> where T : class
 {
     private readonly string _tableName = GetAliasFromTypeName(typeof(T));
     private readonly Dictionary<string, string> _setClauses = new();
+    private string Alias => GetAlias(typeof(T));
     private readonly T? _model;
+
+    public UpdateBuilder() 
+    {
+        _model = null;
+    }
 
     public UpdateBuilder(T? model = null)
     {
         _model = model;
     }
 
-    protected override string GetAlias(Type type)
+    protected override string GetAlias(Type type) => GetAliasFromTypeName(type);
+
+    private string NextParamName() => $"@p{_paramIndex++}";
+
+    private UpdateBuilder<T> AddSetClause(string? alias, string column, object? value)
     {
-        // Aliasing generally unnecessary for update
-        return _tableName;
+        var paramName = NextParamName();
+        var aliasPrefix = alias != null ? alias + "." : $"{Alias}.";
+        _parameters[paramName] = value;
+        _setClauses[$"{aliasPrefix}{column}"] = paramName;
+        return this;
     }
 
-    public UpdateBuilder<T> Set(string column, object? value)
+    public UpdateBuilder<T> Set(string? alias, string column, object? value)
+        => AddSetClause(string.IsNullOrEmpty(alias) ? null : alias, column, value);
+
+    public UpdateBuilder<T> Set<TJoin>(Expression<Func<TJoin, object?>> selector, object? value)
     {
-        var paramName = $"@p{_paramIndex++}";
-        _parameters[paramName] = value;
-        _setClauses[column] = paramName;
-        return this;
+        var alias = GetAliasFromTypeName(typeof(TJoin));
+        var column = GetPropertyName(selector);
+        return AddSetClause(alias, column, value);
+    }
+
+    public UpdateBuilder<T> Set(Expression<Func<T, object?>> selector, object? value)
+    {
+        var alias = GetAliasFromTypeName(typeof(T));
+        var column = GetPropertyName(selector);
+        return AddSetClause(alias, column, value);
     }
 
     public UpdateBuilder<T> AutoMap()
@@ -41,33 +62,44 @@ public class UpdateBuilder<T> : BaseSqlBuilder<UpdateBuilder<T>, T> where T : cl
         foreach (var prop in _model.GetType().GetProperties())
         {
             if (!prop.CanRead) continue;
-
             var value = prop.GetValue(_model);
             if (value == null || Equals(value, GetDefault(prop.PropertyType))) continue;
-
             var column = GetColumnName(prop);
-            var finalValue = IsSimpleType(prop.PropertyType) ? value : JsonSerializer.Serialize(value);
-            Set(column, finalValue);
-        }
 
+            if (IsSimpleType(prop.PropertyType))
+                AddSetClause(null, column, value);
+            else
+                AddSetClause(null, column, JsonSerializer.Serialize(value));
+        }
         return this;
     }
-
-    // The Where and OrWhere methods are inherited from the base and support expressions fluently
-    // You can optionally add overloads for string-based conditions as well, calling AddWhere internally
 
     public (string Sql, Dictionary<string, object> Parameters) Build(string keyColumn = "Id")
     {
         if (!_setClauses.Any())
             throw new InvalidOperationException("No SET clause defined.");
 
-        // Ensure WHERE contains keyColumn
-        if (!_whereClauses.Any(w => w.Clause.Contains($"{keyColumn} ")))
-            throw new InvalidOperationException($"WHERE clause must include a condition on the key column '{keyColumn}'.");
+        var aliasKey = $"{_tableName}.{keyColumn}";
+
+        bool hasKeyColumn = _whereClauses.Any(w =>
+            Regex.IsMatch(w.Clause, $@"\b{Regex.Escape(keyColumn)}\b", RegexOptions.IgnoreCase) ||
+            Regex.IsMatch(w.Clause, $@"\b{Regex.Escape(aliasKey)}\b", RegexOptions.IgnoreCase)
+        );
+
+        if (!hasKeyColumn)
+            throw new InvalidOperationException($"WHERE clause must include a condition on '{keyColumn}'.");
 
         var sb = new StringBuilder();
-        sb.Append($"UPDATE {_tableName} SET ");
-        sb.Append(string.Join(", ", _setClauses.Select(kv => $"{kv.Key} = {kv.Value}")));
+
+        if (_joins.Count > 0)
+        {
+            sb.Append($"UPDATE {_tableName} AS {Alias} ");
+            sb.Append(string.Join(" ", _joins) + " ");
+        }
+        else sb.Append($"UPDATE {_tableName} ");
+
+        sb.Append("SET ");
+        sb.Append(string.Join(", ", _setClauses.Select(kv => $"{(_joins.Count > 0 ? kv.Key : kv.Key.Split(".")[1])} = {kv.Value}")));
 
         if (_whereClauses.Any())
         {
@@ -80,7 +112,6 @@ public class UpdateBuilder<T> : BaseSqlBuilder<UpdateBuilder<T>, T> where T : cl
         }
 
         sb.Append(";");
-
         return (sb.ToString(), new Dictionary<string, object>(_parameters));
     }
 }
