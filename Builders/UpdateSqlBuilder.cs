@@ -107,7 +107,7 @@ public class UpdateBuilder<T> : BaseUpdateDeleteBuilder<UpdateBuilder<T>, T> whe
             for (int i = 0; i < _whereClauses.Count; i++)
             {
                 if (i > 0) sb.Append($" {_whereClauses[i].Logic} ");
-                sb.Append(_whereClauses[i].Clause);
+                sb.Append((_joins.Count > 0 ? _whereClauses[i].Clause : _whereClauses[i].Clause.Split(".")[1]));
             }
         }
 
