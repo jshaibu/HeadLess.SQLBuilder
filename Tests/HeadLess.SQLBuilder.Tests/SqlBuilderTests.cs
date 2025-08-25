@@ -4,7 +4,7 @@ using HeadLess.SQLBuilder.Builders;
 
 namespace HeadLess.SQLBuilder.Tests.HeadLess.SQLBuilder.Tests;
 
-// -------------------- SQLBUILDER TESTS --------------------
+// -------------------- SQLBUILDER TESTS -----------------------
 public class SqlBuilderTests
 {
     [Fact]
