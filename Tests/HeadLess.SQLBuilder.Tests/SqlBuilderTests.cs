@@ -75,7 +75,6 @@ public class SqlBuilderTests
 
         Assert.Contains("WHERE Customers.Phone = @p0", sql);
         
-        // parameters is likely Dictionary<string, object>
         var paramDict = parameters as IDictionary<string, object>;
         Assert.NotNull(paramDict);            // Ensure cast worked
         Assert.Single(paramDict);             // Ensure only one parameter
